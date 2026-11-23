@@ -6,6 +6,15 @@
 [![Terraform](https://img.shields.io/badge/IaC-Terraform%20(AWS%2C%20Azure%2C%20GCP)-7B42BC.svg)](file:///c:/Users/AKASH%20A%20DUBARI/Desktop/DataFix/terraform)
 [![Monitoring](https://img.shields.io/badge/Telemetry-Prometheus%20%26%20Grafana-E6522C.svg)](file:///c:/Users/AKASH%20A%20DUBARI/Desktop/DataFix/monitoring)
 [![License](https://img.shields.io/badge/License-MIT-10b981.svg)]()
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-10b981.svg)](https://famous-berries-rule.loca.lt)
+
+---
+
+### 🌐 Live Public Demonstration
+- 🔗 **Live Dashboard URL:** **[https://famous-berries-rule.loca.lt](https://famous-berries-rule.loca.lt)**
+- 🔑 **Tunnel Password (if prompted on first visit):** `106.202.110.41`
+
+---
 
 > A centralized, enterprise-grade DevOps platform demonstrating how microservices are developed, containerized, orchestrated, deployed, and monitored across **Amazon Web Services (AWS)**, **Microsoft Azure**, and **Google Cloud Platform (GCP)** without vendor lock-in.
 
