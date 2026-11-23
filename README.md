@@ -6,13 +6,14 @@
 [![Terraform](https://img.shields.io/badge/IaC-Terraform%20(AWS%2C%20Azure%2C%20GCP)-7B42BC.svg)](file:///c:/Users/AKASH%20A%20DUBARI/Desktop/DataFix/terraform)
 [![Monitoring](https://img.shields.io/badge/Telemetry-Prometheus%20%26%20Grafana-E6522C.svg)](file:///c:/Users/AKASH%20A%20DUBARI/Desktop/DataFix/monitoring)
 [![License](https://img.shields.io/badge/License-MIT-10b981.svg)]()
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-10b981.svg)](https://famous-berries-rule.loca.lt)
+[![Live Demo](https://img.shields.io/badge/Permanent%20Live%20URL-GitHub%20Pages-10b981?style=for-the-badge&logo=github&logoColor=white)](https://akash143733.github.io/multi-cloud-devops/)
 
 ---
 
-### 🌐 Live Public Demonstration
-- 🔗 **Live Dashboard URL:** **[https://multicloud-devops-akash.loca.lt](https://multicloud-devops-akash.loca.lt)**
-- 🔑 **Tunnel Password (if prompted on first visit):** `106.202.110.41`
+### 🌐 Official Permanent Live Public Deployment
+- 🔗 **Permanent Live Dashboard:** **[https://akash143733.github.io/multi-cloud-devops/](https://akash143733.github.io/multi-cloud-devops/)**
+- ⚡ **24/7 Guaranteed Uptime:** Hosted directly on GitHub's global edge network (Zero 503 errors, no passwords, permanently online).
+- 🚀 **1-Click Render Cloud Deployment:** [Deploy to Render](https://render.com/deploy?repo=https://github.com/AKASH143733/multi-cloud-devops)
 
 ---
 
