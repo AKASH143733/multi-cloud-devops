@@ -1,0 +1,4 @@
+azure_region = "eastus"
+environment  = "production"
+node_count    = 2
+demo_mode    = true

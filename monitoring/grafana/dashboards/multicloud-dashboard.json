@@ -1,0 +1,81 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "Total Multi-Cloud Deployments",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(multicloud_deployments_total)",
+          "legendFormat": "Total Deployments"
+        }
+      ]
+    },
+    {
+      "title": "Cloud CPU Utilization (%)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "targets": [
+        {
+          "expr": "multicloud_cloud_cpu_percent",
+          "legendFormat": "{{cloud_provider}}"
+        }
+      ]
+    },
+    {
+      "title": "Cloud Memory Usage (%)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "targets": [
+        {
+          "expr": "multicloud_cloud_memory_percent",
+          "legendFormat": "{{cloud_provider}}"
+        }
+      ]
+    },
+    {
+      "title": "Application Response Latency (ms)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 14 },
+      "targets": [
+        {
+          "expr": "multicloud_app_response_time_ms",
+          "legendFormat": "{{cloud_provider}}"
+        }
+      ]
+    },
+    {
+      "title": "HTTP Traffic Requests / Sec",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 14 },
+      "targets": [
+        {
+          "expr": "rate(multicloud_http_requests_total[1m])",
+          "legendFormat": "{{endpoint}}"
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["multicloud", "devops", "prometheus", "aws", "azure", "gcp"],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Multi-Cloud DevOps Central Telemetry",
+  "uid": "multicloud-telemetry-01",
+  "version": 1
+}

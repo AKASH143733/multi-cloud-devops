@@ -1,0 +1,30 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env
+
+# SQLite Database
+*.db
+*.sqlite3
+
+# Node & Frontend
+node_modules/
+dist/
+build/
+.vite/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker & OS
+.DS_Store
+Thumbs.db

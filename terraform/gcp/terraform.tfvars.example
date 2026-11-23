@@ -1,0 +1,5 @@
+gcp_project_id = "multicloud-devops-demo-project"
+gcp_region     = "us-central1"
+environment    = "production"
+node_count     = 2
+demo_mode      = true
