@@ -11,7 +11,7 @@
 ---
 
 ### 🌐 Live Public Demonstration
-- 🔗 **Live Dashboard URL:** **[https://famous-berries-rule.loca.lt](https://famous-berries-rule.loca.lt)**
+- 🔗 **Live Dashboard URL:** **[https://multicloud-devops-akash.loca.lt](https://multicloud-devops-akash.loca.lt)**
 - 🔑 **Tunnel Password (if prompted on first visit):** `106.202.110.41`
 
 ---
