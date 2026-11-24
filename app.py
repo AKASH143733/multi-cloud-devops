@@ -115,6 +115,31 @@ def get_dashboard():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/api/applications', methods=['GET', 'POST'])
+def manage_applications():
+    """Returns all registered applications or registers a new application workload"""
+    if request.method == 'POST':
+        try:
+            payload = request.get_json(silent=True) or {}
+            name = payload.get('name', '').strip()
+            if not name:
+                return jsonify({"status": "error", "message": "Application name is required"}), 400
+            desc = payload.get('description', 'Custom Microservice Workload')
+            lang = payload.get('language', 'Python / Docker')
+            ver = payload.get('version', 'v1.0.0')
+            cloud = payload.get('cloud_provider', 'AWS')
+            app_id = db.add_application(name, desc, lang, ver, cloud)
+            db.add_log_entry("INFO", cloud, "AppCatalog", f"Registered new application workload: {name} ({ver})")
+            return jsonify({"status": "success", "message": f"Application '{name}' registered successfully", "data": {"id": app_id, "name": name}}), 201
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
+    else:
+        try:
+            apps = db.get_all_applications()
+            return jsonify({"status": "success", "data": apps}), 200
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
+
 @app.route('/api/clouds', methods=['GET'])
 def get_clouds():
     """Returns status and metrics for AWS, Microsoft Azure, and Google Cloud"""

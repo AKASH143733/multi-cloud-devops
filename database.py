@@ -221,6 +221,26 @@ def get_all_clouds():
     conn.close()
     return clouds
 
+def get_all_applications():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM applications ORDER BY id ASC')
+    apps = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return apps
+
+def add_application(name, description="Microservice Application", language="Python / Docker", version="v1.0.0", cloud_provider="AWS"):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT OR REPLACE INTO applications (name, description, language, current_version, status, cloud_provider, health_score)
+        VALUES (?, ?, ?, ?, 'Running', ?, 100)
+    ''', (name, description, language, version, cloud_provider))
+    app_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return app_id
+
 def get_all_deployments(limit=50):
     conn = get_db_connection()
     cursor = conn.cursor()

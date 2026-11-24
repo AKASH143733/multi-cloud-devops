@@ -177,9 +177,13 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Deployment Modal & Simulation State
+  const [appList, setAppList] = useState(['e-commerce-api', 'payment-gateway', 'user-auth-service', 'frontend-web-portal', 'analytics-pipeline', 'notification-broker']);
   const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
   const [selectedCloudForDeploy, setSelectedCloudForDeploy] = useState('AWS');
   const [selectedAppForDeploy, setSelectedAppForDeploy] = useState('e-commerce-api');
+  const [isCustomApp, setIsCustomApp] = useState(false);
+  const [customAppName, setCustomAppName] = useState('');
+  const [customAppTech, setCustomAppTech] = useState('Python / Docker');
   const [deployVersion, setDeployVersion] = useState('v2.5.0');
   const [deployEnvironment, setDeployEnvironment] = useState('Production');
   const [isDeploying, setIsDeploying] = useState(false);
@@ -262,6 +266,22 @@ function App() {
 
   // 6-Stage Simulated Deployment Trigger
   const handleStartDeployment = () => {
+    const finalAppName = isCustomApp && customAppName.trim() ? customAppName.trim() : selectedAppForDeploy;
+    if (!finalAppName) {
+      showToast('Please enter an application name', 'error');
+      return;
+    }
+
+    // Add custom app to catalog if not present
+    if (!appList.includes(finalAppName)) {
+      setAppList(prev => {
+        const updated = [...prev, finalAppName];
+        try {
+          localStorage.setItem('multicloud_app_list', JSON.stringify(updated));
+        } catch (e) {}
+        return updated;
+      });
+    }
     setIsDeploying(true);
     const newId = (deployments[0]?.id || 100) + 1;
     const nowStr = new Date().toISOString().replace('T', ' ').slice(0, 19);
@@ -272,7 +292,7 @@ function App() {
     }, {
       name: "Build",
       progress: 35,
-      log: `Compiled ${selectedAppForDeploy} package. Bundled assets & verified dependencies`
+      log: `Compiled ${finalAppName} package. Bundled assets & verified dependencies`
     }, {
       name: "Testing",
       progress: 55,
@@ -280,7 +300,7 @@ function App() {
     }, {
       name: "Docker Image Creation",
       progress: 75,
-      log: `Successfully built docker image ${selectedAppForDeploy}:${deployVersion} (size: 142MB)`
+      log: `Successfully built docker image ${finalAppName}:${deployVersion} (size: 142MB)`
     }, {
       name: "Deployment",
       progress: 90,
@@ -292,7 +312,7 @@ function App() {
     }];
     setActiveSimulation({
       id: newId,
-      app_name: selectedAppForDeploy,
+      app_name: finalAppName,
       cloud_provider: selectedCloudForDeploy,
       version: deployVersion,
       environment: deployEnvironment,
@@ -321,7 +341,7 @@ function App() {
         // Add to deployments list
         const newRecord = {
           id: newId,
-          app_name: selectedAppForDeploy,
+          app_name: finalAppName,
           cloud_provider: selectedCloudForDeploy,
           version: deployVersion,
           environment: deployEnvironment,
@@ -347,7 +367,7 @@ function App() {
           level: "SUCCESS",
           cloud_provider: selectedCloudForDeploy,
           service: "DeployWorker",
-          message: `Deployment #${newId} for ${selectedAppForDeploy} (${deployVersion}) verified with 100% availability.`
+          message: `Deployment #${newId} for ${finalAppName} (${deployVersion}) verified with 100% availability.`
         }, ...prev]);
         showToast(`Deployment #${newId} completed successfully!`, 'success');
       }
@@ -368,7 +388,7 @@ function App() {
   const totalCount = deployments.length;
   const summaryData = {
     total_clouds: clouds.length,
-    total_applications: 6,
+    total_applications: appList.length,
     successful_deployments: successfulCount,
     failed_deployments: failedCount,
     total_deployments: totalCount,
@@ -549,19 +569,61 @@ function App() {
     className: "form-group"
   }, /*#__PURE__*/React.createElement("label", null, "Application Name"), /*#__PURE__*/React.createElement("select", {
     className: "form-select",
-    value: selectedAppForDeploy,
-    onChange: e => setSelectedAppForDeploy(e.target.value)
-  }, /*#__PURE__*/React.createElement("option", {
-    value: "e-commerce-api"
-  }, "e-commerce-api (Python / Flask)"), /*#__PURE__*/React.createElement("option", {
-    value: "payment-gateway"
-  }, "payment-gateway (Go / Docker)"), /*#__PURE__*/React.createElement("option", {
-    value: "user-auth-service"
-  }, "user-auth-service (Node.js)"), /*#__PURE__*/React.createElement("option", {
-    value: "frontend-web-portal"
-  }, "frontend-web-portal (React / Nginx)"), /*#__PURE__*/React.createElement("option", {
-    value: "analytics-pipeline"
-  }, "analytics-pipeline (Python / Spark)"))), /*#__PURE__*/React.createElement("div", {
+    value: isCustomApp ? '__custom__' : selectedAppForDeploy,
+    onChange: e => {
+      if (e.target.value === '__custom__') {
+        setIsCustomApp(true);
+      } else {
+        setIsCustomApp(false);
+        setSelectedAppForDeploy(e.target.value);
+      }
+    }
+  }, appList.map(app => /*#__PURE__*/React.createElement("option", {
+    key: app,
+    value: app
+  }, app)), /*#__PURE__*/React.createElement("option", {
+    value: "__custom__"
+  }, "\u2795 + Register New Custom Application..."))), isCustomApp && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: '#f8fafc',
+      padding: '14px',
+      borderRadius: '8px',
+      border: '1px solid #bae6fd',
+      marginBottom: '16px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "form-group",
+    style: {
+      marginBottom: '10px'
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: {
+      fontSize: '12px',
+      color: 'var(--cloud-blue)'
+    }
+  }, "Enter Custom Application Name"), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    className: "form-input",
+    placeholder: "e.g. ai-chatbot-service, order-processor",
+    value: customAppName,
+    onChange: e => setCustomAppName(e.target.value)
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "form-group",
+    style: {
+      marginBottom: 0
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: {
+      fontSize: '12px',
+      color: 'var(--cloud-blue)'
+    }
+  }, "Technology / Framework"), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    className: "form-input",
+    placeholder: "e.g. FastAPI / Docker, Node.js, Go",
+    value: customAppTech,
+    onChange: e => setCustomAppTech(e.target.value)
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "form-group"
   }, /*#__PURE__*/React.createElement("label", null, "Target Cloud Provider"), /*#__PURE__*/React.createElement("select", {
     className: "form-select",

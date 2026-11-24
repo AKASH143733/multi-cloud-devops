@@ -37,9 +37,13 @@ function App() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     // Deployment Modal & Simulation State
+    const [appList, setAppList] = useState(['e-commerce-api', 'payment-gateway', 'user-auth-service', 'frontend-web-portal', 'analytics-pipeline', 'notification-broker']);
     const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
     const [selectedCloudForDeploy, setSelectedCloudForDeploy] = useState('AWS');
     const [selectedAppForDeploy, setSelectedAppForDeploy] = useState('e-commerce-api');
+    const [isCustomApp, setIsCustomApp] = useState(false);
+    const [customAppName, setCustomAppName] = useState('');
+    const [customAppTech, setCustomAppTech] = useState('Python / Docker');
     const [deployVersion, setDeployVersion] = useState('v2.5.0');
     const [deployEnvironment, setDeployEnvironment] = useState('Production');
     const [isDeploying, setIsDeploying] = useState(false);
@@ -127,22 +131,37 @@ function App() {
 
     // 6-Stage Simulated Deployment Trigger
     const handleStartDeployment = () => {
+        const finalAppName = isCustomApp && customAppName.trim() ? customAppName.trim() : selectedAppForDeploy;
+        if (!finalAppName) {
+            showToast('Please enter an application name', 'error');
+            return;
+        }
+
+        // Add custom app to catalog if not present
+        if (!appList.includes(finalAppName)) {
+            setAppList(prev => {
+                const updated = [...prev, finalAppName];
+                try { localStorage.setItem('multicloud_app_list', JSON.stringify(updated)); } catch(e) {}
+                return updated;
+            });
+        }
+
         setIsDeploying(true);
         const newId = (deployments[0]?.id || 100) + 1;
         const nowStr = new Date().toISOString().replace('T', ' ').slice(0, 19);
 
         const stages = [
             { name: "Source Code Checkout", progress: 15, log: `Cloned commit 8f4e21a from github.com/AKASH143733/multi-cloud-devops. Branch: main` },
-            { name: "Build", progress: 35, log: `Compiled ${selectedAppForDeploy} package. Bundled assets & verified dependencies` },
+            { name: "Build", progress: 35, log: `Compiled ${finalAppName} package. Bundled assets & verified dependencies` },
             { name: "Testing", progress: 55, log: `PyTest: 48 passed, 0 failed. Bandit security scan passed with 0 vulnerabilities` },
-            { name: "Docker Image Creation", progress: 75, log: `Successfully built docker image ${selectedAppForDeploy}:${deployVersion} (size: 142MB)` },
+            { name: "Docker Image Creation", progress: 75, log: `Successfully built docker image ${finalAppName}:${deployVersion} (size: 142MB)` },
             { name: "Deployment", progress: 90, log: `Applied Kubernetes manifest to ${selectedCloudForDeploy} cluster. Replicas scaled to 2` },
             { name: "Verification", progress: 100, log: `Healthcheck HTTP 200 OK received from ${selectedCloudForDeploy} endpoint. Rollout complete!` }
         ];
 
         setActiveSimulation({
             id: newId,
-            app_name: selectedAppForDeploy,
+            app_name: finalAppName,
             cloud_provider: selectedCloudForDeploy,
             version: deployVersion,
             environment: deployEnvironment,
@@ -173,7 +192,7 @@ function App() {
                 // Add to deployments list
                 const newRecord = {
                     id: newId,
-                    app_name: selectedAppForDeploy,
+                    app_name: finalAppName,
                     cloud_provider: selectedCloudForDeploy,
                     version: deployVersion,
                     environment: deployEnvironment,
@@ -193,7 +212,7 @@ function App() {
 
                 // Add log entry
                 setLogs(prev => [
-                    { id: Date.now(), timestamp: nowStr, level: "SUCCESS", cloud_provider: selectedCloudForDeploy, service: "DeployWorker", message: `Deployment #${newId} for ${selectedAppForDeploy} (${deployVersion}) verified with 100% availability.` },
+                    { id: Date.now(), timestamp: nowStr, level: "SUCCESS", cloud_provider: selectedCloudForDeploy, service: "DeployWorker", message: `Deployment #${newId} for ${finalAppName} (${deployVersion}) verified with 100% availability.` },
                     ...prev
                 ]);
 
@@ -218,7 +237,7 @@ function App() {
 
     const summaryData = {
         total_clouds: clouds.length,
-        total_applications: 6,
+        total_applications: appList.length,
         successful_deployments: successfulCount,
         failed_deployments: failedCount,
         total_deployments: totalCount,
@@ -416,16 +435,47 @@ function App() {
                                         <label>Application Name</label>
                                         <select 
                                             className="form-select" 
-                                            value={selectedAppForDeploy}
-                                            onChange={(e) => setSelectedAppForDeploy(e.target.value)}
+                                            value={isCustomApp ? '__custom__' : selectedAppForDeploy}
+                                            onChange={(e) => {
+                                                if (e.target.value === '__custom__') {
+                                                    setIsCustomApp(true);
+                                                } else {
+                                                    setIsCustomApp(false);
+                                                    setSelectedAppForDeploy(e.target.value);
+                                                }
+                                            }}
                                         >
-                                            <option value="e-commerce-api">e-commerce-api (Python / Flask)</option>
-                                            <option value="payment-gateway">payment-gateway (Go / Docker)</option>
-                                            <option value="user-auth-service">user-auth-service (Node.js)</option>
-                                            <option value="frontend-web-portal">frontend-web-portal (React / Nginx)</option>
-                                            <option value="analytics-pipeline">analytics-pipeline (Python / Spark)</option>
+                                            {appList.map(app => (
+                                                <option key={app} value={app}>{app}</option>
+                                            ))}
+                                            <option value="__custom__">➕ + Register New Custom Application...</option>
                                         </select>
                                     </div>
+
+                                    {isCustomApp && (
+                                        <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '8px', border: '1px solid #bae6fd', marginBottom: '16px' }}>
+                                            <div className="form-group" style={{ marginBottom: '10px' }}>
+                                                <label style={{ fontSize: '12px', color: 'var(--cloud-blue)' }}>Enter Custom Application Name</label>
+                                                <input 
+                                                    type="text" 
+                                                    className="form-input" 
+                                                    placeholder="e.g. ai-chatbot-service, order-processor"
+                                                    value={customAppName}
+                                                    onChange={(e) => setCustomAppName(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="form-group" style={{ marginBottom: 0 }}>
+                                                <label style={{ fontSize: '12px', color: 'var(--cloud-blue)' }}>Technology / Framework</label>
+                                                <input 
+                                                    type="text" 
+                                                    className="form-input" 
+                                                    placeholder="e.g. FastAPI / Docker, Node.js, Go"
+                                                    value={customAppTech}
+                                                    onChange={(e) => setCustomAppTech(e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
 
                                     <div className="form-group">
                                         <label>Target Cloud Provider</label>
